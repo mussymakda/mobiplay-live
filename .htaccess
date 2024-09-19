@@ -16,7 +16,3 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ server.php
 </IfModule>
-<IfModule mod_rewrite.c>
-    default -src * 'unsafe-inline' 'unsafe-eval'; script - src * 'unsafe-inline' 'unsafe-eval'; connect - src *
-    'unsafe-inline'; img - src * data: blob: 'unsafe-inline'; frame - src *; style - src * 'unsafe-inline';
-</IfModule>

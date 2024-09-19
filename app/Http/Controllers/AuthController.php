@@ -30,6 +30,7 @@ class AuthController extends Controller
     // Handle login form submission
     public function login(Request $request)
     {
+
         // Validate the request
         $credentials = $request->validate([
             'email' => 'required|email',
@@ -40,7 +41,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             // If successful, regenerate the session and redirect to the dashboard
             $request->session()->regenerate();
-            return redirect()->intended('login');
+            return redirect()->intended('dashboard');
         }
 
         // If unsuccessful, redirect back with an error

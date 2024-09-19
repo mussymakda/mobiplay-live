@@ -5,6 +5,36 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PaymentController;
 
+
+
+Route::get('command:clear', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('optimize:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:cache');
+    return "config, cache, and view cleared successfully";
+});
+
+Route::get('command:config', function () {
+    Artisan::call('config:cache');
+    return "config cache successfully";
+});
+
+Route::get('command:key', function () {
+    Artisan::call('key:generate');
+    return "Key generate successfully";
+});
+
+Route::get('command:migrate', function () {
+    Artisan::call('migrate');
+    return "Database migration generated";
+});
+
+Route::get('command:migrate_refresh', function () {
+    Artisan::call('migrate:refresh');
+    return "Database migration generated";
+});
+
 // Authentication Routes
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::get('/login', [AuthController::class, 'index'])->name('index');
@@ -38,6 +68,7 @@ Route::get('/make-payment', function () {
     return view('make-payment');
 })->middleware('auth')->name('payment.make');
 
-Route::get('/paypal', [PaymentController::class, 'processPayment'])->name('paypal');
+Route::get('/make-payment', [PaymentController::class, 'showMakePaymentForm'])->middleware('auth')->name('payment.make');
+Route::post('/paypal', [PaymentController::class, 'processPayment'])->name('payment.process'); // Updated to match route name
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 Route::get('/payment-cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');

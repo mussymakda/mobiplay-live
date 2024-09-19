@@ -5,6 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,9 +17,6 @@
   <link rel="stylesheet" type="text/css" href="assets/css/ion.rangeSlider.css">
   <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
   <link rel="stylesheet" type="text/css" href="assets/css/responsive.css">
-
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}"></script>
 </head>
 
 <body>
@@ -75,7 +73,7 @@
                   </div>
                   <div class="summary-d">
                     <div class="summary-inside">
-                      <label>Total Credits</label>
+                      <label>Total</label>
                       <span id="summary-total">$0.00</span>
                     </div>
                   </div>
@@ -84,26 +82,26 @@
             </div>
             <div class="col-lg-5">
               <div class="payment-form">
-                <div class="payment-details">
-                  <div class="row gx-3">
-                    <div class="col-lg-12">
-                      <div class="form-group mb-3">
-                        <label>Enter Amount<sup>*</sup></label>
-                        <input type="number" id="amount" name="amount" class="form-control" oninput="updateSummary()">
+                <form action="{{ route('payment.process') }}" method="POST">
+                  @csrf
+                  <div class="payment-details">
+                    <div class="row gx-3">
+                      <div class="col-lg-12">
+                        <div class="form-group mb-3">
+                          <label>Enter Amount<sup>*</sup></label>
+                          <input type="number" id="amount" name="amount" class="form-control" oninput="updateSummary()" required>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-lg-12">
-                      <div id="paypal-button-container"></div>
-                    </div>
                   </div>
-                </div>
+                  <input type="submit" value="Pay with PayPal" class="btn btn-primary">
+                </form>
               </div>
             </div>
             <div class="col-lg-7"></div>
             <div class="col-lg-5">
               <div class="camp-grp-btn pb-0">
                 <a href="ad-spend.html" class="btn btn-secondary">Back</a>
-                <!-- <a href="{{ route('paypal') }}" class="btn btn-primary">Pay with PayPal</a> -->
               </div>
             </div>
           </div>
@@ -135,29 +133,6 @@
       document.getElementById('summary-bonus').textContent = `$${bonus.toFixed(2)}`;
       document.getElementById('summary-total').textContent = `$${total.toFixed(2)}`;
     }
-
-    $(document).ready(function() {
-      paypal.Buttons({
-        createOrder: function(data, actions) {
-          return actions.order.create({
-            purchase_units: [{
-              amount: {
-                value: document.getElementById('amount').value || '0'
-              }
-            }]
-          });
-        },
-        onApprove: function(data, actions) {
-          return actions.order.capture().then(function(details) {
-            window.location.href = '{{ route("payment.success") }}'; // Redirect to success page
-          });
-        },
-        onError: function(err) {
-          console.error('Error: ', err);
-          alert('An error occurred during payment. Please try again.');
-        }
-      }).render('#paypal-button-container');
-    });
   </script>
 </body>
 

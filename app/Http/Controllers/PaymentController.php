@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -29,14 +28,20 @@ class PaymentController extends Controller
 
     public function processPayment(Request $request)
     {
-        Log::info('Processing payment request', $request->all());
-
+        Log::info('Processing payment request', ['request_data' => $request->all()]);
+    
         $amount = $request->input('amount', '10.00'); // Default amount if not provided
-
+    
         $request->validate([
             'amount' => 'required|numeric|min:0.01',
         ]);
-
+    
+        $payment = new Payment();
+        $payment->user_id = Auth::id();
+        $payment->amount = $amount;
+        $payment->status = 'Pending';
+        $payment->save();
+    
         $createOrderRequest = new OrdersCreateRequest();
         $createOrderRequest->prefer('return=representation');
         $createOrderRequest->body = [
@@ -50,80 +55,70 @@ class PaymentController extends Controller
                 ],
             ],
             'application_context' => [
-                'return_url' => route('payment.success'),
+                'return_url' => route('payment.success', ['payment_id' => $payment->id]),
                 'cancel_url' => route('payment.cancel'),
             ],
         ];
-
+    
         try {
             $response = $this->client->execute($createOrderRequest);
-            Log::info('PayPal Response:', $response->result);
-
+            Log::info('PayPal Response:', ['response_data' => (array) $response->result]);
+    
             $approvalUrl = collect($response->result->links)->firstWhere('rel', 'approve')->href;
-
+    
             if ($approvalUrl) {
                 return redirect($approvalUrl);
             } else {
+                $payment->status = 'Failed';
+                $payment->log = 'Payment approval URL not found.';
+                $payment->save();
                 Log::error('PayPal approval URL not found.');
                 return redirect()->route('payment.cancel')->with('error', 'Payment approval URL not found.');
             }
-        } catch (\Exception $ex) {
-            Log::error('PayPal Order Creation Error: ' . $ex->getMessage());
-            return redirect()->route('payment.cancel')->with('error', 'An error occurred while processing the payment. Please try again later.');
+        } catch (\Exception $e) {
+            $payment->status = 'Failed';
+            $payment->log = 'Error creating PayPal order: ' . $e->getMessage();
+            $payment->save();
+            Log::error('Error creating PayPal order: ' . $e->getMessage());
+            return redirect()->route('payment.cancel')->with('error', 'An error occurred while creating the PayPal order.');
         }
     }
+    
 
-    public function paymentSuccess(Request $request)
-    {
-        $paymentId = $request->query('token'); // Adjust the query parameter name based on PayPal's response
-        $payerId = $request->query('PayerID');
+    public function handlePaymentSuccess(Request $request)
+{
+    $orderId = $request->query('token'); // Get the order ID from the query string
 
-        if (!$paymentId || !$payerId) {
-            return redirect()->route('payment.cancel')->with('error', 'Invalid payment details.');
-        }
+    $payment = Payment::where('id', $request->query('payment_id'))->first();
 
-        $captureRequest = new OrdersCaptureRequest($paymentId);
-        $captureRequest->body = [];
+    $captureOrderRequest = new OrdersCaptureRequest($orderId);
+    $captureOrderRequest->prefer('return=representation');
 
-        try {
-            $response = $this->client->execute($captureRequest);
-            $order = $response->result;
+    try {
+        $response = $this->client->execute($captureOrderRequest);
+        Log::info('PayPal Capture Response:', ['response_data' => (array) $response->result]);
 
-            $user = Auth::user();
-            $amount = $order->purchase_units[0]->amount->value;
-            $credit = $amount; // Adjust this logic if needed
+        // Handle the response and update the database
+        $payment->amount = $response->result->purchase_units[0]->amount->value;
+        $payment->status = $response->result->status;
+        $payment->log = 'Payment captured successfully.';
+        $payment->save();
 
-            DB::transaction(function () use ($user, $credit, $order) {
+        // Redirect to a success page
+        return redirect()->route('payment.success')->with('success', 'Payment completed successfully.');
 
-                Payment::create([
-                    'user_id' => $user->id,
-                    'amount' => $credit,
-                    'transaction_id' => $order->id,
-                    'status' => 'completed',
-                ]);
-            });
-
-            return view('payment-status')->with('isSuccess', true);
-        } catch (\Exception $ex) {
-            Log::error('PayPal Payment Capture Error: ' . $ex->getMessage());
-            return redirect()->route('payment.cancel')->with('error', 'Payment capture failed. Please try again later.');
-        }
+    } catch (\Exception $e) {
+        $payment->status = 'Failed';
+        $payment->log = 'Error capturing PayPal order: ' . $e->getMessage();
+        $payment->save();
+        Log::error('Error capturing PayPal order: ' . $e->getMessage());
+        return redirect()->route('payment.cancel')->with('error', 'An error occurred while capturing the PayPal order.');
     }
+}
 
-    public function paymentCancel(Request $request)
+
+    public function handlePaymentCancel()
     {
-        $orderId = $request->query('orderId'); // Adjust the query parameter name based on PayPal's response
-
-        if ($orderId) {
-            // Log the canceled payment attempt
-            Payment::create([
-                'user_id' => Auth::id(), // You may need to handle the user ID if the user is not logged in
-                'amount' => 0, // Set to 0 or handle accordingly
-                'transaction_id' => $orderId,
-                'status' => 'canceled',
-            ]);
-        }
-
-        return view('payment-status')->with('isSuccess', false);
+        return view('payment-cancel');
     }
 }
