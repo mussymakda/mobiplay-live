@@ -49,7 +49,7 @@ class PaymentController extends Controller
             'purchase_units' => [
                 [
                     'amount' => [
-                        'currency_code' => 'MXN',
+                        'currency_code' => 'USD',
                         'value' => number_format((float)$amount, 2, '.', ''),
                     ],
                 ],

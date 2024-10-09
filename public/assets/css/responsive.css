@@ -83,6 +83,9 @@
 	.auth-form{
 		padding: 20px;
 	}
+  #navbar-wrapper.campaginstep-header .navbar .step-logo{
+    position: initial;
+  }
 }
 @media (min-width: 768px) and (max-width: 991px) {
   #wrapper {

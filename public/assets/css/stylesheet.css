@@ -22,6 +22,12 @@ body{
 	border: 1px solid #000;
 	box-shadow: none;
 }
+.btn-primary:visited{
+	background: #000;
+	color: #fff;
+	border: 1px solid #000;
+	box-shadow: none;
+}
 .btn-secondary{
 	background: #fff;
 	padding: 9px 20px;
@@ -36,11 +42,17 @@ body{
 	color: #fff;
 	border: 1px solid #000;
 }
+
 .btn-secondary:focus{
 	background: #000;
 	color: #fff;
 	border: 1px solid #000;
 	box-shadow: none;
+}
+.btn-secondary:visited{
+	background: #fff;
+	color: #000;
+	border: 1px solid #000;
 }
 .mobile-logo{
 	display: none;
@@ -174,6 +186,28 @@ a.profile-auth {
 a.profile-auth img{
 	margin-left: 5px;
 }
+button.otp-back-btn {
+    border: 0px;
+    background: transparent;
+	
+}
+.otp-back-btn img{
+	width: 42px;
+    object-fit: cover;
+    object-position: center;
+    height: 42px;
+    transform: scale(1.8);
+}
+.create-campaign-box.offer-box .campaign-details h2 {
+    text-transform: uppercase;
+    color: #F55139;
+    font-size: 28px;
+    font-weight: 900;
+}
+.create-campaign-box.offer-box .campaign-details p span {
+    color: black;
+    font-weight: 700;
+}
 a.back-btn{
 	width: 50px;
 	height: 50px;
@@ -193,6 +227,7 @@ a.back-btn{
 }
 .otp .form-control{
 	margin-right: 10px;
+	text-align: center;
 }
 .sub-auth{
 	font-size: 18px;
@@ -437,14 +472,14 @@ a.help-link {
 	
 	transition: all linear;
 }
-#navbar-wrapper .navbar-header .right-nav .profile-name{
-	font-size: 18px;
-	line-height: 48px;
-	font-weight: 700;
-	color: #000;
-	text-decoration: none;
-	border: 1px solid #ddd;
-    padding: 0px 10px;
+#navbar-wrapper .navbar-header .right-nav .profile-name {
+    font-size: 18px;
+    line-height: 48px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    padding: 0px 7px 0px 20px;
     border-radius: 50px;
     display: flex;
     height: 49px;
@@ -494,6 +529,7 @@ div.date-custom i.fa-solid.fa-chevron-down{
 	padding: 10px 0;
 }
 .total-box {
+	height: calc(100% - 30px);
     box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.17);
     background: #fff;
     border-radius: 12px;
@@ -533,7 +569,7 @@ div.date-custom i.fa-solid.fa-chevron-down{
 	box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.17);
     background: #fff;
     border-radius: 12px;
-    padding: 30px 15px 0px 15px;
+    padding: 0px 15px 0px 15px;
     margin-bottom: 30px;
     display: flex;
     align-items: center;
@@ -558,7 +594,7 @@ div.date-custom i.fa-solid.fa-chevron-down{
 .create-campaign-box .campaign-details p{
 	font-size: 16px;
 	line-height: 21px;
-	color: rgba(117, 117, 117, 1);
+	color: #545454;
 	font-weight: 500;
 
 }
@@ -590,6 +626,127 @@ div.date-custom i.fa-solid.fa-chevron-down{
 	letter-spacing: -0.01em;
 	text-align: center;
 }
+body{margin-top:20px;}
+
+.alert {
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.11);
+  display: table;
+  width: 100%;
+}
+
+.alert-white {
+  background-image: linear-gradient(to bottom, #fff, #f9f9f9);
+  border-top-color: #d8d8d8;
+  border-bottom-color: #bdbdbd;
+  border-left-color: #cacaca;
+  border-right-color: #cacaca;
+  color: #404040;
+  padding-left: 61px;
+  position: relative;
+}
+
+.alert-white.rounded {
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+.alert-white.rounded .icon {
+  border-radius: 3px 0 0 3px;
+  -webkit-border-radius: 3px 0 0 3px;
+}
+
+.alert-white .icon {
+  text-align: center;
+  width: 45px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid #bdbdbd;
+  padding-top: 15px;
+}
+
+
+.alert-white .icon:after {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  display: block;
+  content: '';
+  width: 10px;
+  height: 10px;
+  border: 1px solid #bdbdbd;
+  position: absolute;
+  border-left: 0;
+  border-bottom: 0;
+  top: 50%;
+  right: -6px;
+  margin-top: -3px;
+  background: #fff;
+}
+
+.alert-white .icon i {
+  font-size: 20px;
+  color: #fff;
+  left: 12px;
+  margin-top: -10px;
+  position: absolute;
+  top: 50%;
+}
+/*============ colors ========*/
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.alert-white.alert-success .icon, 
+.alert-white.alert-success .icon:after {
+  border-color: #54a754;
+  background: #60c060;
+}
+
+.alert-info {
+  background-color: #d9edf7;
+  border-color: #98cce6;
+  color: #3a87ad;
+}
+
+.alert-white.alert-info .icon, 
+.alert-white.alert-info .icon:after {
+  border-color: #3a8ace;
+  background: #4d90fd;
+}
+
+
+.alert-white.alert-warning .icon, 
+.alert-white.alert-warning .icon:after {
+  border-color: #d68000;
+  background: #fc9700;
+}
+
+.alert-warning {
+  background-color: #fcf8e3;
+  border-color: #f1daab;
+  color: #c09853;
+}
+
+.alert-danger {
+  background-color: #f2dede;
+  border-color: #e0b1b8;
+  color: #b94a48;
+}
+
+.alert-white.alert-danger .icon, 
+.alert-white.alert-danger .icon:after {
+  border-color: #ca452e;
+  background: #da4932;
+}
+
 #campaign_Modal .modal-content{
 	border-radius: 21px;
 }
@@ -785,11 +942,10 @@ div.date-custom i.fa-solid.fa-chevron-down{
 }
 
 .camp-grp-btn {
-    padding: 30px 0;
     text-align: center;
 }
 .camp-grp-btn a{
-	margin: 20px;
+	margin: 10px;
 	min-width: 148px;
 	box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.12);
 }
@@ -1074,6 +1230,7 @@ div.date-custom i.fa-solid.fa-chevron-down{
 	padding: 10px;
 	flex-shrink: 0;
 	text-align: right;
+	max-width: 115px;
 }
 .ad-close a{
 	text-decoration: none;
@@ -1089,7 +1246,7 @@ div.date-custom i.fa-solid.fa-chevron-down{
 
 }
 .ad-close a img {
-    margin-left: 5px;
+    margin-left: 10px;
 }
 .add-schedule-box .add-time .form-group {
     margin: 0 10px;

@@ -100,21 +100,31 @@
             </div>
           </div>
           <div class="col-lg-12">
-            <div class="create-campaign-box">
-              <div class="campaign-img">
-                <img src="assets/images/create-capaign.svg">
-              </div>
-              <div class="campaign-details">
-                <h1>Oferta por tiempo limitado</h1>
-                <div class="row justify-content-lg-end">
-                  <p>Oferta actual: Obtén <span style="font-size: 20px; font-weight: 700; color: black;">$3,000</span> en créditos publicitarios adicionales con tu primer depósito de <span style="font-size: 20px; font-weight: 700; color: black;">$3,000</span>.</p>
+              <div class="create-campaign-box">
+                <div class="campaign-img">
+                  <img class="img-fluid" src="assets/images/create-capaign.svg">
                 </div>
-                <form action="{{ route('payment.make') }}" method="GET">
-                  <button type="submit" class="btn btn-primary">Añadir Balance</button>
-                </form>
+                <div class="campaign-details">
+                  <h2>Create your first campaign</h2>
+                  <p>Launch your first campaign to begin reaching new audiences</p>
+                  <a href="{{ route('campaign-wizard') }}" class="btn btn-primary" ><i class="fa-solid fa-plus"></i> Create</a>
+                </div>
               </div>
             </div>
-          </div>
+            <div class="col-lg-12">
+              <div class="create-campaign-box offer-box">
+                <div class="campaign-img">
+                  <img class="img-fluid" src="assets/images/add_money.svg">
+                </div>
+                <div class="campaign-details">
+                  <h2>Limited time Offer</h2>
+                  <p>Limited Time Offer Current Offer: <span>Get $3,000</span> in bonus ad credits with your first <span>$3,000 deposit.</span></p>
+                  <form action="{{ route('payment.make') }}" method="GET">
+                    <button type="submit" class="btn btn-primary">Añadir Balance</button>
+                  </form>
+                </div>
+              </div>
+            </div>
           <div class="row">
             <div class="col-lg-4">
               <div class="total-box">
@@ -133,7 +143,7 @@
               </div>
             </div>
             <div class="col-lg-4">
-              <div class="total-box" style="background-color: #8d8d8d07;">
+              <div class="total-box" style="color: gray" >
                 <div class="total-header">
                   <div class="total-left">
                     <h2>0</h2>
@@ -149,7 +159,7 @@
               </div>
             </div>
             <div class="col-lg-4">
-              <div class="total-box" style="background-color: #8d8d8d07;">
+              <div class="total-box"style="color: gray"  >
                 <div class="total-header">
                   <div class="total-left">
                     <h2>$0.00</h2>
@@ -165,7 +175,7 @@
               </div>
             </div>
             <div class="col-lg-4">
-              <div class="total-box" style="background-color: #8d8d8d07;">
+              <div class="total-box"style="color: gray"  >
                 <div class="total-header">
                   <div class="total-left">
                     <h2>0</h2>
@@ -186,31 +196,6 @@
       </div>
     </section>
 
-  </div>
-
-  <!-- Modal -->
-  <div class="modal fade" id="campaign_Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-body p-0">
-          <div class="campaign-modal">
-            <div class="campaign-header">
-              <img src="{{ asset('assets/images/campaign-icon.svg') }}">
-              <h2>Crear una Campaña</h2>
-            </div>
-            <div class="campaign-body">
-              <div class="form-group mb-3">
-                <label>Nombre<sup>*</sup></label>
-                <input type="text" name="" class="form-control">
-              </div>
-              <div class="form-group mb-3">
-                <a href="goal.html" class="btn btn-primary w-100">Empezar</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>

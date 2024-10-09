@@ -8,7 +8,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Mobiplay</title>
-    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,301,400,401,500,501,700,701,900,901,1,2&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,301,400,401,500,501,700,701,900,901,1,2&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="assets/css/responsive.css">
 </head>
@@ -27,6 +28,9 @@
                         <h2>Sign in</h2>
                         <form method="POST" action="{{ url('/login') }}">
                             @csrf <!-- This is important for CSRF protection -->
+                            @if(session('error'))
+                                <div class="alert alert-danger">{{ session('error') }}</div>
+                            @endif
                             <div class="form-group mb-3">
                                 <label for="email">Email</label>
                                 <input type="email" id="email" name="email" class="form-control" required>
@@ -72,12 +76,14 @@
         <div class="modal-dialog terms-modal">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <button type="button" class="btn-close close-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close close-circle" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="terms-privacy">
                         <h2>Terms and Conditions</h2>
-                        <p>These terms and conditions govern your use of our services. Please read them carefully. By using our services, you agree to these terms.</p>
+                        <p>These terms and conditions govern your use of our services. Please read them carefully. By
+                            using our services, you agree to these terms.</p>
                     </div>
                 </div>
             </div>
@@ -89,12 +95,14 @@
         <div class="modal-dialog terms-modal">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <button type="button" class="btn-close close-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close close-circle" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="terms-privacy">
                         <h2>Privacy Policy</h2>
-                        <p>Your privacy is important to us. This policy explains how we collect, use, and protect your personal information. Please review it carefully.</p>
+                        <p>Your privacy is important to us. This policy explains how we collect, use, and protect your
+                            personal information. Please review it carefully.</p>
                     </div>
                 </div>
             </div>
