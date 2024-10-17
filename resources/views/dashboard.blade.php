@@ -31,13 +31,13 @@
           <a href="{{ route('dashboard') }}"><img src="{{ asset('assets/images/dashboard-icon.svg') }}"> <span>Tablero</span></a>
         </li>
         <li>
-          <a href="analytics.html"><img src="{{ asset('assets/images/analytics-icons.svg') }}"> <span>Analítica</span></a>
+          <a href="{{ route('analytics') }}"><img src="{{ asset('assets/images/analytics-icons.svg') }}"> <span>Analítica</span></a>
         </li>
         <li>
           <a href="campaign.html"><img src="{{ asset('assets/images/campaign-icon.svg') }}"> <span>Campañas</span></a>
         </li>
         <li>
-          <a href="profile.html"><img src="{{ asset('assets/images/profile-icon.svg') }}"> <span>Perfil</span></a>
+          <a href="{{ route('profile') }}"><img src="{{ asset('assets/images/profile-icon.svg') }}"> <span>Perfil</span></a>
         </li>
       </ul>
       <a href="#" class="help-link"><img src="{{ asset('assets/images/help.svg') }}"> <span>Centro de Ayuda</span></a>

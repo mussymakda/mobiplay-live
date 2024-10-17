@@ -96,7 +96,11 @@
     width: 60px;
   }
   
-#wrapper.toggled #navbar-wrapper {
+#wrapper.toggled #protected $routeMiddleware = [
+    // other route-specific middleware
+    'redirect_if_authenticated' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+];
+wrapper {
     position: absolute;
     margin-right: -250px;
 }

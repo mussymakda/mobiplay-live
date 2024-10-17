@@ -74,7 +74,7 @@
                                     Up</button>
                             </div>
                             <div class="form-group">
-                                <p>Do you have an account? <a href="login.html">Sign In</a></p>
+                                <p>Do you have an account? <a href="{{ route('login') }}">Sign In</a></p>
                             </div>
                         </form>
                     </div>

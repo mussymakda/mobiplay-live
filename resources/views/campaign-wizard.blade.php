@@ -20,7 +20,13 @@
     <script src="https://davidshimjs.github.io/qrcodejs/qrcode.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/ion.rangeSlider.css">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css' rel='stylesheet' />
 
+    <!-- Mapbox JS -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js'></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turf/6.5.0/turf.min.js"></script>
 </head>
 <style>
     .advertisement img {
@@ -264,7 +270,7 @@
                         </div>
                         {{-- Step 3: Schedule --}}
                         <div class="step" id="step-3" style="display: none">
-                          
+
 
                         </div>
                         {{-- Step: 4 --}}
@@ -273,7 +279,7 @@
                                 <div class="container-fluid p-0">
                                     <div class="row justify-content-end g-0">
                                         <div class="col-lg-7 order-lg-2">
-                                            <div id="map" style="height: 500px;"></div>
+                                            <div id="map" style="height: 100%;"></div>
                                         </div>
                                         <div class="col-lg-4 order-lg-1">
                                             <div class="loacat-section">
@@ -284,9 +290,10 @@
                                                 <div class="location-list">
                                                     <div class="location-box active">
                                                         <div class="location-select">
-                                                            <select class="form-select">
-                                                                <option>Santiago de Queretaro</option>
-                                                                <option>Mexico City</option>
+                                                            <select class="form-select" id="location-select">
+                                                                <option value="Queretaro">Santiago de Queretaro
+                                                                </option>
+                                                                <option value="Mexico City">Mexico City</option>
                                                             </select>
                                                             <a href="#"><img src="assets/images/delete.svg"></a>
                                                         </div>
@@ -317,6 +324,7 @@
                                 </div>
                             </section>
                         </div>
+
                         {{-- Step 5 --}}
                         <div class="step" id="step-5" style="display: none">
                             <section id="content-wrapper" class="">
@@ -384,98 +392,112 @@
     <!-- Load jQuery before ion.rangeSlider -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider/js/ion.rangeSlider.min.js"></script>
-    {{-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script> --}}
-    <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turf/6.5.0/turf.min.js"></script>
+
     <script>
-        let map;
-        let marker;
-        let circle;
-        let geocoder;
+        // Initialize Mapbox
+        mapboxgl.accessToken =
+            'pk.eyJ1IjoibXVzdGFuc2lybWFrZGEiLCJhIjoiY20yYzNpd213MHJhNTJqcXduNjU4ZGFkdyJ9.qnsW91lfIZ1EniLcPlAEkQ';
+        var map = new mapboxgl.Map({
+            container: 'map', // ID of the map container
+            style: 'mapbox://styles/mapbox/streets-v11', // Map style
+            center: [-100.392, 20.588], // Initial map center [lng, lat]
+            zoom: 10 // Initial zoom level
+        });
 
-        function initMap() {
-            geocoder = new google.maps.Geocoder();
+        // Create a marker
+        var marker = new mapboxgl.Marker({
+                draggable: true // Make the marker draggable
+            })
+            .setLngLat([-100.392, 20.588]) // Set marker position
+            .addTo(map); // Add marker to the map
 
-            const defaultLocation = {
-                lat: 20.617,
-                lng: -100.185
-            };
+        // Create a circle layer for the radius
+        var radiusLayerId = 'radius-circle';
+        var radius = 10; // Default radius in kilometers
+        var circleCoordinates = [-100.392, 20.588]; // Initial circle coordinates
 
-            // Initialize map
-            map = new google.maps.Map(document.getElementById("map"), {
-                center: defaultLocation,
-                zoom: 12
-            });
-
-            // Initialize marker
-            marker = new google.maps.Marker({
-                position: defaultLocation,
-                map: map,
-                draggable: true
-            });
-
-            // Initialize circle with default radius
-            circle = new google.maps.Circle({
-                map: map,
-                radius: 10000, // in meters
-                fillColor: '#AA0000',
-                strokeWeight: 1,
-                strokeColor: '#000',
-                fillOpacity: 0.2
-            });
-
-            circle.bindTo('center', marker, 'position');
-
-            // Update address on marker drag
-            google.maps.event.addListener(marker, 'dragend', function() {
-                updateAddress(marker.getPosition());
-            });
-
-            // Update marker and address on map click
-            google.maps.event.addListener(map, 'click', function(event) {
-                marker.setPosition(event.latLng);
-                updateAddress(event.latLng);
-            });
-
-            // Initialize ionRangeSlider
-            $("#radius-slider").ionRangeSlider({
-                min: 1,
-                max: 100,
-                from: 1,
-                onStart: function(data) {
-                    updateCircleRadius(data.from);
-                },
-                onChange: function(data) {
-                    updateCircleRadius(data.from);
-                }
-            });
+        // Function to update marker position and address
+        function updateMarkerPosition() {
+            var lngLat = marker.getLngLat();
+            circleCoordinates = [lngLat.lng, lngLat.lat];
+            getLocationName(circleCoordinates); // Get the location name
+            drawCircle(radius); // Draw the radius circle
         }
 
-        // Function to update the map circle radius
-        function updateCircleRadius(radiusKm) {
-            document.getElementById('radius-value').value = radiusKm;
-            circle.setRadius(radiusKm * 1000); // Convert to meters
-        }
+        // Update the address when marker is dragged
+        marker.on('dragend', updateMarkerPosition);
 
-        // Function to update address in the address box
-        function updateAddress(latlng) {
-            geocoder.geocode({
-                'location': latlng
-            }, function(results, status) {
-                if (status === 'OK') {
-                    if (results[0]) {
-                        document.getElementById('address').textContent = results[0].formatted_address;
+        // Click event to move the marker and update the radius
+        map.on('click', function(e) {
+            marker.setLngLat(e.lngLat); // Move marker to the clicked location
+            updateMarkerPosition(); // Update the marker position and address
+        });
+
+        // Function to get location name using Mapbox Geocoding API
+        function getLocationName(lngLat) {
+            var url =
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat[0]},${lngLat[1]}.json?access_token=${mapboxgl.accessToken}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.features.length > 0) {
+                        document.getElementById('address').textContent = data.features[0]
+                        .place_name; // Get the location name
                     } else {
-                        document.getElementById('address').textContent = 'Address not found';
+                        document.getElementById('address').textContent = 'Location not found';
                     }
-                } else {
-                    document.getElementById('address').textContent = 'Geocoder failed: ' + status;
+                })
+                .catch(error => {
+                    console.error('Error fetching location name:', error);
+                });
+        }
+
+        // Function to draw a circle on the map
+        function drawCircle(radius) {
+            var radiusInMeters = radius * 1000; // Convert km to meters
+            var circle = turf.circle(circleCoordinates, radiusInMeters, {
+                steps: 64,
+                units: 'meters',
+            });
+
+            // Remove the existing circle layer if it exists
+            if (map.getLayer(radiusLayerId)) {
+                map.removeLayer(radiusLayerId);
+                map.removeSource(radiusLayerId);
+            }
+
+            // Add the circle as a new source
+            map.addSource(radiusLayerId, {
+                type: 'geojson',
+                data: circle
+            });
+
+            // Add a new layer to visualize the radius
+            map.addLayer({
+                id: radiusLayerId,
+                type: 'fill',
+                source: radiusLayerId,
+                layout: {},
+                paint: {
+                    'fill-color': 'rgba(0, 0, 255, 0.5)', // Circle color
+                    'fill-opacity': 0.5 // Circle opacity
                 }
             });
         }
 
-        // Load map on window load
-        window.onload = initMap;
+        // Function to handle radius slider
+        document.getElementById('radius-slider').addEventListener('input', function() {
+            radius = this.value; // Update the radius value
+            document.getElementById('radius-value').value = radius;
+            drawCircle(radius); // Redraw the circle with the updated radius
+        });
+
+        // Initial draw of the circle
+        drawCircle(radius);
     </script>
+
     <script type="text/javascript">
         var $range = $(".js-range-slider"),
             $input = $(".js-input"),
@@ -519,16 +541,16 @@
         document.getElementById("generateQr").onclick = function() {
             var ctaUrl = document.getElementById("ctaUrl").value;
             var qrcodeContainer = document.getElementById("qrcode");
-    
+
             // Check if the input URL is empty
             if (!ctaUrl) {
                 alert("Please enter a URL to generate the QR code.");
                 return;
             }
-    
+
             // Clear previous QR code
             qrcodeContainer.innerHTML = "";
-    
+
             try {
                 // Generate new QR code
                 var qrcode = new QRCode(qrcodeContainer, {
@@ -537,9 +559,10 @@
                     height: 128,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H // Correct Level property needs to be used without extra commas
+                    correctLevel: QRCode.CorrectLevel
+                        .H // Correct Level property needs to be used without extra commas
                 });
-    
+
                 // Set display style via JavaScript or add a CSS class
                 qrcodeContainer.style.display = "inline-block"; // Apply display style
             } catch (error) {

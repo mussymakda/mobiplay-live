@@ -1,4 +1,8 @@
 <?php
+
+use App\Http\Controllers\EditProfileController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegistrationController;
@@ -77,3 +81,44 @@ Route::get('/make-payment', [PaymentController::class, 'showMakePaymentForm'])->
 Route::post('/paypal', [PaymentController::class, 'processPayment'])->name('payment.process');
 Route::get('/payment-success', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
 Route::get('/payment-cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
+
+// Profile Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+
+    // Edit Profile Routes
+    Route::get('/edit-profile', [EditProfileController::class, 'show'])->name('profile.edit');
+    Route::post('/edit-profile', [EditProfileController::class, 'update'])->name('profile.update');
+
+});
+Route::get('/payments', function () {
+    return view('payments');
+})->middleware('auth');
+
+Route::get('/settings', [SettingsController::class, 'show'])->middleware('auth')->name('settings');
+
+Route::get('/about-us', function () {
+    return view('about-us');
+})->middleware('auth')->name('settings');
+
+Route::get('contact', function () {
+    return view('contact');
+})->middleware('auth')->name('contact');
+Route::get('terms', function () {
+    return view('terms');
+})->middleware('auth')->name('terms');
+Route::get('privacy', function () {
+    return view('privacy');
+})->middleware('auth')->name('privacy');
+
+Route::get('faq', function () {
+    return view('faq');
+})->middleware('auth')->name('faq');
+
+Route::get('password', function () {
+    return view('password');
+})->middleware('auth')->name('password');
+
+Route::get('analytics', function () {
+    return view('analytics');
+})->middleware('auth')->name('analytics');

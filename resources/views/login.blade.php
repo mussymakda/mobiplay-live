@@ -26,9 +26,14 @@
                 <div class="col-lg-6 p-relative h-100 align-content-center">
                     <div class="auth-form">
                         <h2>Sign in</h2>
+                        @if (session('success'))
+                            <div class="alert alert-success" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
                         <form method="POST" action="{{ url('/login') }}">
                             @csrf <!-- This is important for CSRF protection -->
-                            @if(session('error'))
+                            @if (session('error'))
                                 <div class="alert alert-danger">{{ session('error') }}</div>
                             @endif
                             <div class="form-group mb-3">
